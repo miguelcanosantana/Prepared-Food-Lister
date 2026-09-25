@@ -4,12 +4,12 @@ import { RefresherCustomEvent, IonHeader, IonToolbar, IonTitle, IonContent, IonR
 import { DataService } from '../../services/data.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'app-dishes',
+  templateUrl: 'dishes.page.html',
+  styleUrls: ['dishes.page.scss'],
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonRefresher, IonRefresherContent, IonList],
 })
-export class HomePage {
+export class DishesPage {
   
   private data = inject(DataService);
 

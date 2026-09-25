@@ -7,11 +7,11 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
-        loadComponent: () => import('./pages/home/home.page').then((m) => m.HomePage),
+        loadComponent: () => import('./pages/dishes/dishes.page').then((m) => m.DishesPage),
       },
       {
-        path: 'list',
-        loadComponent: () => import('./pages/list/list.page').then((m) => m.ListPage),
+        path: 'ingredients',
+        loadComponent: () => import('./pages/ingredients/ingredients.page').then((m) => m.IngredientsPage),
       },
       {
         path: '',
