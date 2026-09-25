@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">prepared-food-lister</string>
+    <string name="title_activity_main">prepared-food-lister</string>
+    <string name="package_name">prepared.food.lister</string>
+    <string name="custom_url_scheme">prepared.food.lister</string>
+</resources>
