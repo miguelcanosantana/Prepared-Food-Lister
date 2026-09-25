@@ -3,15 +3,16 @@ import { IonContent, IonHeader, IonTitle, IonFab, IonFabButton, IonIcon, IonInpu
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 import { Ingredient } from '../../models/ingredient';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-ingredients',
   templateUrl: './ingredients.page.html',
-  imports: [IonItem, IonModal, IonTitle, IonButton, IonButtons, IonToolbar, IonInput, IonContent, IonHeader, IonFab, IonFabButton, IonIcon, IonRow, IonCol, IonGrid]
+  imports: [FormsModule, IonItem, IonModal, IonTitle, IonButton, IonButtons, IonToolbar, IonInput, IonContent, IonHeader, IonFab, IonFabButton, IonIcon, IonRow, IonCol, IonGrid]
 })
 export class IngredientsPage {
 
-  newIngredient?: Ingredient
+  newIngredient = new Ingredient();
 
   constructor() {
     addIcons({ add });

@@ -27,13 +27,25 @@
             <ion-grid>
                 <ion-row>
                     <ion-col size="12">
-                        <ion-input label-placement="fixed" fill="solid" placeholder="Name of the ingredient" ngModel></ion-input>
+                        <ion-input label-placement="fixed" fill="solid" placeholder="Name of the ingredient" [(ngModel)]="newIngredient.name"></ion-input>
                     </ion-col>
                     <ion-col size="6">
-                        <ion-input label="Solid input" label-placement="floating" fill="solid" placeholder="Enter text"></ion-input>
+                        <ion-input type="number" label-placement="fixed" fill="solid" placeholder="Calories" [(ngModel)]="newIngredient.calories"></ion-input>
                     </ion-col>
                     <ion-col size="6">
-                        <ion-input label="Solid input" label-placement="floating" fill="solid" placeholder="Enter text"></ion-input>
+                        <ion-input type="number" label-placement="fixed" fill="solid" placeholder="Protein (g)" [(ngModel)]="newIngredient.protein"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label-placement="fixed" fill="solid" placeholder="Carbs (g)" [(ngModel)]="newIngredient.carbs"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label-placement="fixed" fill="solid" placeholder="Fats (g)" [(ngModel)]="newIngredient.fats"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label-placement="fixed" fill="solid" placeholder="Fiber (g)" [(ngModel)]="newIngredient.fiber"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label-placement="fixed" fill="solid" placeholder="Sugar (g)" [(ngModel)]="newIngredient.sugar"></ion-input>
                     </ion-col>
                 </ion-row>
             </ion-grid>
