@@ -2,6 +2,16 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+    
+    <ion-list>
+        @for (ingredient of loadedIngredients; track ingredient.guid) {
+
+            <ion-item>
+                <p>{{ingredient.name}}</p>
+            </ion-item>
+        }
+        
+    </ion-list>
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
       <ion-fab-button id="open-modal">
@@ -18,7 +28,7 @@
             </ion-buttons>
             <ion-title>Add a new ingredient</ion-title>
             <ion-buttons slot="end">
-              <ion-button [strong]="true" (click)="modal.dismiss()">Add</ion-button>
+              <ion-button [strong]="true" (click)="saveNewIngredient(modal)">Add</ion-button>
             </ion-buttons>
           </ion-toolbar>
         </ion-header>
