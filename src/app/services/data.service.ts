@@ -1,4 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import {
+  CapacitorSQLite,
+  SQLiteConnection,
+  SQLiteDBConnection
+} from '@capacitor-community/sqlite';
 import { Ingredient } from '../models/ingredient';
 import { Dish } from '../models/dish';
 
@@ -17,65 +23,86 @@ export class DataService {
 
   public loadedIngredients: Ingredient[] = [];
   public loadedDishes: Dish[] = [];
+  public ready: Promise<void>;
 
   constructor() {
-    this.loadDB();
+    this.ready = this.initializeDB();
   }
 
-  public loadDB() {
-    this.loadedIngredients = [];
-    this.loadedDishes = [];
+  private async initializeDB(): Promise<void> {
+    const sqlite = new SQLiteConnection(CapacitorSQLite);
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-
-      if (key?.startsWith('ingredients/')) {
-        const ingredient = localStorage.getItem(key);
-
-        if (ingredient !== null) {
-          this.loadedIngredients.push(JSON.parse(ingredient) as Ingredient);
-        }
-      }
-
-      if (key?.startsWith('dishes/')) {
-        const dish = localStorage.getItem(key);
-
-        if (dish !== null) {
-          this.loadedDishes.push(JSON.parse(dish) as Dish);
-        }
-      }
+    if (Capacitor.getPlatform() === 'web') {
+      await sqlite.initWebStore();
     }
+
+    const database = await sqlite.createConnection('prepared-food-lister', false, 'no-encryption', 1, false);
+    await database.open();
+    await database.execute(
+      'CREATE TABLE IF NOT EXISTS ingredients (guid TEXT PRIMARY KEY NOT NULL, data TEXT NOT NULL);'
+    );
+    await database.execute(
+      'CREATE TABLE IF NOT EXISTS dishes (guid TEXT PRIMARY KEY NOT NULL, data TEXT NOT NULL);'
+    );
+
+    this.database = database;
+    await this.refreshDB();
   }
 
-  public setIngredient(ingredient: Ingredient) {
+  private database!: SQLiteDBConnection;
 
+  public async loadDB(): Promise<void> {
+    await this.ready;
+    await this.refreshDB();
+  }
+
+  private async refreshDB(): Promise<void> {
+    const ingredients = await this.database.query('SELECT data FROM ingredients;');
+    const dishes = await this.database.query('SELECT data FROM dishes;');
+
+    this.loadedIngredients = (ingredients.values ?? []).map(row => JSON.parse(row.data) as Ingredient);
+    this.loadedDishes = (dishes.values ?? []).map(row => JSON.parse(row.data) as Dish);
+  }
+
+  public async setIngredient(ingredient: Ingredient): Promise<void> {
+    await this.ready;
     ingredient.guid = crypto.randomUUID();
-    localStorage.setItem(`ingredients/${ingredient.guid}`, JSON.stringify(ingredient));
+    await this.database.run(
+      'INSERT OR REPLACE INTO ingredients (guid, data) VALUES (?, ?);',
+      [ingredient.guid, JSON.stringify(ingredient)]
+    );
   }
 
-  public getIngredient(guid: string): Ingredient | null {
+  public async getIngredient(guid: string): Promise<Ingredient | null> {
+    await this.ready;
+    const result = await this.database.query('SELECT data FROM ingredients WHERE guid = ?;', [guid]);
+    const storedValue = result.values?.[0]?.data;
 
-    var ingredient = localStorage.getItem(`ingredients/${guid}`)
-    var parsedIngredient = ingredient !== null ? JSON.parse(ingredient) : null
-    
-    return parsedIngredient;
+    if (storedValue === undefined) {
+      return null;
+    }
+
+    return JSON.parse(storedValue) as Ingredient;
   }
 
-  public setDish(dish: Dish) {
-
+  public async setDish(dish: Dish): Promise<void> {
+    await this.ready;
     dish.guid = crypto.randomUUID();
-    localStorage.setItem(`dishes/${dish.guid}`, JSON.stringify(dish));
+    await this.database.run(
+      'INSERT OR REPLACE INTO dishes (guid, data) VALUES (?, ?);',
+      [dish.guid, JSON.stringify(dish)]
+    );
   }
 
-  public getDish(guid: string): Dish | null {
+  public async getDish(guid: string): Promise<Dish | null> {
+    await this.ready;
+    const result = await this.database.query('SELECT data FROM dishes WHERE guid = ?;', [guid]);
+    const storedValue = result.values?.[0]?.data;
 
-    var dish = localStorage.getItem(`dishes/${guid}`)
-    var parsedDish = dish !== null ? JSON.parse(dish) : null
+    if (storedValue === undefined) {
+      return null;
+    }
 
-    return parsedDish;
+    return JSON.parse(storedValue) as Dish;
   }
-
-  // public getMessageById(id: number): Message {
-  //   return this.messages[id];
-  // }
 }
