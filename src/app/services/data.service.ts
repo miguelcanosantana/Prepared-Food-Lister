@@ -24,19 +24,18 @@ export class DataService {
   public loadedIngredients: Ingredient[] = [];
   public loadedDishes: Dish[] = [];
   public ready: Promise<void>;
+  private sqlite = new SQLiteConnection(CapacitorSQLite);
 
   constructor() {
     this.ready = this.initializeDB();
   }
 
   private async initializeDB(): Promise<void> {
-    const sqlite = new SQLiteConnection(CapacitorSQLite);
-
     if (Capacitor.getPlatform() === 'web') {
-      await sqlite.initWebStore();
+      await this.sqlite.initWebStore();
     }
 
-    const database = await sqlite.createConnection('prepared-food-lister', false, 'no-encryption', 1, false);
+    const database = await this.sqlite.createConnection('prepared-food-lister', false, 'no-encryption', 1, false);
     await database.open();
     await database.execute(
       'CREATE TABLE IF NOT EXISTS ingredients (guid TEXT PRIMARY KEY NOT NULL, data TEXT NOT NULL);'
@@ -64,6 +63,12 @@ export class DataService {
     this.loadedDishes = (dishes.values ?? []).map(row => JSON.parse(row.data) as Dish);
   }
 
+  private async persistWebDB(): Promise<void> {
+    if (Capacitor.getPlatform() === 'web') {
+      await this.sqlite.saveToStore('prepared-food-lister');
+    }
+  }
+
   public async setIngredient(ingredient: Ingredient): Promise<void> {
     await this.ready;
     ingredient.guid = crypto.randomUUID();
@@ -71,6 +76,7 @@ export class DataService {
       'INSERT OR REPLACE INTO ingredients (guid, data) VALUES (?, ?);',
       [ingredient.guid, JSON.stringify(ingredient)]
     );
+    await this.persistWebDB();
   }
 
   public async getIngredient(guid: string): Promise<Ingredient | null> {
@@ -92,6 +98,7 @@ export class DataService {
       'INSERT OR REPLACE INTO dishes (guid, data) VALUES (?, ?);',
       [dish.guid, JSON.stringify(dish)]
     );
+    await this.persistWebDB();
   }
 
   public async getDish(guid: string): Promise<Dish | null> {

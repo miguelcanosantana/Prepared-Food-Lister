@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { Capacitor } from '@capacitor/core';
 import { SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 
 import { DataService } from './data.service';
@@ -42,7 +43,9 @@ describe('DataService', () => {
       })
     };
 
+    vi.spyOn(Capacitor, 'getPlatform').mockReturnValue('web');
     vi.spyOn(SQLiteConnection.prototype, 'initWebStore').mockResolvedValue();
+    vi.spyOn(SQLiteConnection.prototype, 'saveToStore').mockResolvedValue();
     vi.spyOn(SQLiteConnection.prototype, 'createConnection').mockResolvedValue(database as unknown as SQLiteDBConnection);
     TestBed.configureTestingModule({});
   });
@@ -92,5 +95,6 @@ describe('DataService', () => {
     const savedIngredient = await service.getIngredient(ingredient.guid!);
 
     expect(savedIngredient?.name).toBe('Tomato');
+    expect(SQLiteConnection.prototype.saveToStore).toHaveBeenCalledWith('prepared-food-lister');
   });
 });
