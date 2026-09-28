@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonFab, IonFabButton, IonIcon, IonInput, IonToolbar, IonButtons, IonButton, IonModal, IonItem, IonRow, IonCol, IonGrid, IonList } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
@@ -16,7 +16,7 @@ export class IngredientsPage implements OnInit {
 
   private dataService = inject(DataService);
 
-  loadedIngredients: Ingredient[] = [];
+  loadedIngredients = signal<Ingredient[]>([]);
   newIngredient = new Ingredient();
 
   constructor() {
@@ -25,14 +25,14 @@ export class IngredientsPage implements OnInit {
 
   async ngOnInit() {
     await this.dataService.loadDB();
-    this.loadedIngredients = this.dataService.loadedIngredients;
+    this.loadedIngredients.set(this.dataService.loadedIngredients);
   }
 
   async saveNewIngredient(modal: IonModal) {
     await this.dataService.setIngredient(this.newIngredient);
     await this.dataService.loadDB();
     
-    this.loadedIngredients = this.dataService.loadedIngredients;
+    this.loadedIngredients.set(this.dataService.loadedIngredients);
     this.newIngredient = new Ingredient();
     modal.dismiss();
   }

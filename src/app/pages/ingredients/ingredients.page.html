@@ -4,7 +4,7 @@
 <ion-content [fullscreen]="true">
     
     <ion-list>
-        @for (ingredient of loadedIngredients; track ingredient.guid) {
+        @for (ingredient of loadedIngredients(); track ingredient.guid) {
 
             <ion-item>
                 <p>{{ingredient.name}}</p>
