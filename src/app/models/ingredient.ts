@@ -2,6 +2,7 @@ export class Ingredient {
   constructor(
     public guid?: string,
     public name?: string,
+    public dateSaved?: number,
     public quantity?: number,
     public unit?: string,
     public calories?: number,

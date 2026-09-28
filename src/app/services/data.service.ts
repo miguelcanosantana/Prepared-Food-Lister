@@ -66,47 +66,95 @@ export class DataService {
     }
   }
 
-  public async setIngredient(ingredient: Ingredient): Promise<void> {
-    await this.ready;
-    ingredient.guid = crypto.randomUUID();
-    await this.database.run(
-      'INSERT OR REPLACE INTO ingredients (guid, data) VALUES (?, ?);',
-      [ingredient.guid, JSON.stringify(ingredient)]
-    );
-    await this.persistWebDB();
-  }
+  public async loadDishes(): Promise<Dish[] | string> {
 
-  public async getIngredient(guid: string): Promise<Ingredient | null> {
-    await this.ready;
-    const result = await this.database.query('SELECT data FROM ingredients WHERE guid = ?;', [guid]);
-    const storedValue = result.values?.[0]?.data;
+    try {
+      
+      await this.ready;
 
-    if (storedValue === undefined) {
-      return null;
+      const dishes = await this.database.query('SELECT data FROM dishes;');
+      return (dishes.values ?? []).map(row => JSON.parse(row.data) as Dish);
+
+    } catch (error) {
+      return String(error);
     }
-
-    return JSON.parse(storedValue) as Ingredient;
   }
 
-  public async setDish(dish: Dish): Promise<void> {
-    await this.ready;
-    dish.guid = crypto.randomUUID();
-    await this.database.run(
-      'INSERT OR REPLACE INTO dishes (guid, data) VALUES (?, ?);',
-      [dish.guid, JSON.stringify(dish)]
-    );
-    await this.persistWebDB();
-  }
+  public async setIngredient(ingredient: Ingredient): Promise<void | string> {
 
-  public async getDish(guid: string): Promise<Dish | null> {
-    await this.ready;
-    const result = await this.database.query('SELECT data FROM dishes WHERE guid = ?;', [guid]);
-    const storedValue = result.values?.[0]?.data;
+    try {
 
-    if (storedValue === undefined) {
-      return null;
+      await this.ready;
+
+      ingredient.guid = crypto.randomUUID();
+      ingredient.dateSaved = Date.now();
+
+      var insertSQL = 'INSERT OR REPLACE INTO ingredients (guid, data) VALUES (?, ?);';
+
+      await this.database.run(insertSQL,[ingredient.guid, JSON.stringify(ingredient)]);
+      await this.persistWebDB();
+
+    } catch (error) {
+      return String(error);
     }
+  }
 
-    return JSON.parse(storedValue) as Dish;
+  public async getIngredient(guid: string): Promise<Ingredient | null | string> {
+
+    try {
+      
+      await this.ready;
+
+      const result = await this.database.query('SELECT data FROM ingredients WHERE guid = ?;', [guid]);
+      const storedValue = result.values?.[0]?.data;
+
+      if (storedValue === undefined) {
+        return null;
+      }
+
+      return JSON.parse(storedValue) as Ingredient;
+
+    } catch (error) {
+      return String(error);
+    }
+  }
+
+  public async setDish(dish: Dish): Promise<void | string> {
+
+    try {
+
+      await this.ready;
+
+      dish.guid = crypto.randomUUID();
+      dish.dateSaved = Date.now();
+
+      var insertSQL = 'INSERT OR REPLACE INTO dishes (guid, data) VALUES (?, ?);';
+
+      await this.database.run(insertSQL,[dish.guid, JSON.stringify(dish)]);
+      await this.persistWebDB();
+
+    } catch (error) {
+      return String(error);
+    }
+  }
+
+  public async getDish(guid: string): Promise<Dish | null | string> {
+
+    try {
+      
+      await this.ready;
+
+      const result = await this.database.query('SELECT data FROM dishes WHERE guid = ?;', [guid]);
+      const storedValue = result.values?.[0]?.data;
+
+      if (storedValue === undefined) {
+        return null;
+      }
+
+      return JSON.parse(storedValue) as Dish;
+
+    } catch (error) {
+      return String(error);
+    }
   }
 }
