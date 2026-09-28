@@ -20,9 +20,6 @@ import { Dish } from '../models/dish';
   providedIn: 'root'
 })
 export class DataService {
-
-  public loadedIngredients: Ingredient[] = [];
-  public loadedDishes: Dish[] = [];
   public ready: Promise<void>;
   private sqlite = new SQLiteConnection(CapacitorSQLite);
 
@@ -45,27 +42,27 @@ export class DataService {
     );
 
     this.database = database;
-    await this.refreshDB();
   }
 
   private database!: SQLiteDBConnection;
 
-  public async loadDB(): Promise<void> {
-    await this.ready;
-    await this.refreshDB();
-  }
-
-  private async refreshDB(): Promise<void> {
-    const ingredients = await this.database.query('SELECT data FROM ingredients;');
-    const dishes = await this.database.query('SELECT data FROM dishes;');
-
-    this.loadedIngredients = (ingredients.values ?? []).map(row => JSON.parse(row.data) as Ingredient);
-    this.loadedDishes = (dishes.values ?? []).map(row => JSON.parse(row.data) as Dish);
-  }
-
   private async persistWebDB(): Promise<void> {
     if (Capacitor.getPlatform() === 'web') {
       await this.sqlite.saveToStore('prepared-food-lister');
+    }
+  }
+
+  public async loadIngredients(): Promise<Ingredient[] | string> {
+
+    try {
+      
+      await this.ready;
+
+      const ingredients = await this.database.query('SELECT data FROM ingredients;');
+      return (ingredients.values ?? []).map(row => JSON.parse(row.data) as Ingredient);
+
+    } catch (error) {
+      return String(error);
     }
   }
 

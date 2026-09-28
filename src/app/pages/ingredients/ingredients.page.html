@@ -4,6 +4,13 @@
 <ion-content [fullscreen]="true">
     
     <ion-list>
+
+        @if (loadError()) {
+            <ion-item color="danger">
+                <p>{{ loadError() }}</p>
+            </ion-item>
+        }
+
         @for (ingredient of loadedIngredients(); track ingredient.guid) {
 
             <ion-item>

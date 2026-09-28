@@ -17,6 +17,7 @@ export class IngredientsPage implements OnInit {
   private dataService = inject(DataService);
 
   loadedIngredients = signal<Ingredient[]>([]);
+  loadError = signal<string>('');
   newIngredient = new Ingredient();
 
   constructor() {
@@ -24,15 +25,26 @@ export class IngredientsPage implements OnInit {
   }
 
   async ngOnInit() {
-    await this.dataService.loadDB();
-    this.loadedIngredients.set(this.dataService.loadedIngredients);
+    this.loadIngredients();
+  }
+
+  async loadIngredients() {
+
+    var loadResult = await this.dataService.loadIngredients();
+
+    if (typeof loadResult === "string") {
+      this.loadError.set(loadResult);
+      return;
+    }
+
+    this.loadedIngredients.set(loadResult);
+    this.loadError.set('');
   }
 
   async saveNewIngredient(modal: IonModal) {
     await this.dataService.setIngredient(this.newIngredient);
-    await this.dataService.loadDB();
-    
-    this.loadedIngredients.set(this.dataService.loadedIngredients);
+    await this.loadIngredients();
+
     this.newIngredient = new Ingredient();
     modal.dismiss();
   }
