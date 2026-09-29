@@ -71,15 +71,15 @@ export class IngredientsPage implements OnInit {
     modal.dismiss();
   }
 
+  async deleteIngredient(guid: string) {
+    
+    await this.dataService.deleteIngredient(guid)
+    await this.loadIngredients();
+  }
+  
   presentDeleteAlert(guid: string) {
     this.selectedIngredientGuid = guid;
     this.isDeleteAlertOpen.set(true);
-  }
-
-  async deleteIngredient(guid: string) {
-
-    await this.dataService.deleteIngredient(guid)
-    await this.loadIngredients();
   }
 
 }
