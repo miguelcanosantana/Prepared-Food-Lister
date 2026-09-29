@@ -99,6 +99,24 @@ export class DataService {
     }
   }
 
+  public async updateIngredient(ingredient: Ingredient): Promise<void | string> {
+
+    try {
+
+      await this.ready;
+
+      if (!ingredient.guid) {
+        return 'Ingredient to update has no guid';
+      }
+
+      await this.database.run('UPDATE ingredients SET data = ? WHERE guid = ?;', [JSON.stringify(ingredient), ingredient.guid]);
+      await this.persistWebDB();
+
+    } catch (error) {
+      return String(error);
+    }
+  }
+
   public async getIngredient(guid: string): Promise<Ingredient | null | string> {
 
     try {

@@ -40,6 +40,7 @@ export class IngredientsPage implements OnInit {
   isDeleteAlertOpen = signal(false);
   selectedIngredientGuid: string | null = null;
   newIngredient = new Ingredient();
+  editingIngredient = new Ingredient();
 
   constructor() {
     addIcons({ add });
@@ -68,6 +69,22 @@ export class IngredientsPage implements OnInit {
     await this.loadIngredients();
 
     this.newIngredient = new Ingredient();
+    modal.dismiss();
+  }
+
+  openEditModal(ingredient: Ingredient, modal: IonModal) {
+    this.editingIngredient = Object.assign(new Ingredient(), ingredient);
+    void modal.present();
+  }
+
+  async saveEditedIngredient(modal: IonModal) {
+    const updateResult = await this.dataService.updateIngredient(this.editingIngredient);
+    if (typeof updateResult === 'string') {
+      this.loadError.set(updateResult);
+      return;
+    }
+
+    await this.loadIngredients();
     modal.dismiss();
   }
 

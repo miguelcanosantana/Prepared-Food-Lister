@@ -15,7 +15,7 @@
 
             <ion-item-sliding>
 
-                <ion-item>
+                <ion-item button (click)="openEditModal(ingredient, editModal)">
                     <ion-label>{{ingredient.name}}</ion-label>
                 </ion-item>
 
@@ -28,12 +28,12 @@
     </ion-list>
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-      <ion-fab-button id="open-modal">
+      <ion-fab-button id="open-create-modal">
           <ion-icon name="add"></ion-icon>
       </ion-fab-button>
     </ion-fab>
 
-    <ion-modal #modal trigger="open-modal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]" handleBehavior="cycle" [expandToScroll]="false">
+    <ion-modal #modal trigger="open-create-modal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]" handleBehavior="cycle" [expandToScroll]="false">
       <ng-template>
         <ion-header>
           <ion-toolbar>
@@ -71,6 +71,51 @@
                     </ion-col>
                     <ion-col size="6">
                         <ion-input type="number" label="Sugar (g)" label-placement="floating" fill="solid" [(ngModel)]="newIngredient.sugar"></ion-input>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+    <ion-modal #editModal [initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]" handleBehavior="cycle" [expandToScroll]="false">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-button (click)="editModal.dismiss()">Cancel</ion-button>
+            </ion-buttons>
+            <ion-title>Edit ingredient</ion-title>
+            <ion-buttons slot="end">
+              <ion-button [strong]="true" (click)="saveEditedIngredient(editModal)">Save</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+
+            <ion-grid>
+                <ion-row>
+                    <ion-col size="12">
+                        <ion-input label="Name of the ingredient" label-placement="floating" fill="solid" [(ngModel)]="editingIngredient.name"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label="Calories" label-placement="floating" fill="solid" [(ngModel)]="editingIngredient.calories"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label="Protein (g)" label-placement="floating" fill="solid" [(ngModel)]="editingIngredient.protein"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label="Carbs (g)" label-placement="floating" fill="solid" [(ngModel)]="editingIngredient.carbs"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label="Fats (g)" label-placement="floating" fill="solid" [(ngModel)]="editingIngredient.fats"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label="Fiber (g)" label-placement="floating" fill="solid" [(ngModel)]="editingIngredient.fiber"></ion-input>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-input type="number" label="Sugar (g)" label-placement="floating" fill="solid" [(ngModel)]="editingIngredient.sugar"></ion-input>
                     </ion-col>
                 </ion-row>
             </ion-grid>
