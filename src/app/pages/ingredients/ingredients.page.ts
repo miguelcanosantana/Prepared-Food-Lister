@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonLabel, IonFab, IonFabButton, IonIcon, IonInput, IonToolbar, IonButtons, IonButton, IonModal, IonItem, IonRow, IonCol, IonGrid, IonList, IonItemOption, IonItemOptions, IonItemSliding } from '@ionic/angular';
+import { IonContent, IonHeader, IonTitle, IonLabel, IonFab, IonFabButton, IonIcon, IonInput, IonToolbar, IonButtons, IonButton, IonModal, IonItem, IonRow, IonCol, IonGrid, IonList, IonItemOption, IonItemOptions, IonItemSliding, IonAlert } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 import { Ingredient } from '../../models/ingredient';
@@ -10,14 +10,35 @@ import { DataService } from '../../services/data.service';
 @Component({
   selector: 'app-ingredients',
   templateUrl: './ingredients.page.html',
-  imports: [FormsModule, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonModal, IonTitle, IonLabel, IonButton, IonButtons, IonToolbar, IonInput, IonContent, IonHeader, IonFab, IonFabButton, IonIcon, IonRow, IonCol, IonGrid, IonList]
+  imports: [IonAlert, FormsModule, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonModal, IonTitle, IonLabel, IonButton, IonButtons, IonToolbar, IonInput, IonContent, IonHeader, IonFab, IonFabButton, IonIcon, IonRow, IonCol, IonGrid, IonList]
 })
 export class IngredientsPage implements OnInit {
 
   private dataService = inject(DataService);
 
+  public alertButtons = [
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      handler: () => {
+
+      },
+    },
+    {
+      text: 'Delete',
+      role: 'confirm',
+      handler: () => {
+        if (this.selectedIngredientGuid) {
+          void this.deleteIngredient(this.selectedIngredientGuid);
+        }
+      },
+    },
+  ];
+
   loadedIngredients = signal<Ingredient[]>([]);
   loadError = signal<string>('');
+  isDeleteAlertOpen = signal(false);
+  selectedIngredientGuid: string | null = null;
   newIngredient = new Ingredient();
 
   constructor() {
@@ -42,11 +63,27 @@ export class IngredientsPage implements OnInit {
   }
 
   async saveNewIngredient(modal: IonModal) {
+
     await this.dataService.setIngredient(this.newIngredient);
     await this.loadIngredients();
 
     this.newIngredient = new Ingredient();
     modal.dismiss();
+  }
+
+  presentDeleteAlert(guid: string) {
+    if (guid === null) {
+      return;
+    }
+
+    this.selectedIngredientGuid = guid;
+    this.isDeleteAlertOpen.set(true);
+  }
+
+  async deleteIngredient(guid: string) {
+
+    await this.dataService.deleteIngredient(guid)
+    await this.loadIngredients();
   }
 
 }

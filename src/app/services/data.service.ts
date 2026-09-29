@@ -119,6 +119,22 @@ export class DataService {
     }
   }
 
+  public async deleteIngredient(guid: string): Promise<void | string> {
+
+    try {
+
+      await this.ready;
+
+      var deleteSQL = 'DELETE FROM ingredients WHERE guid = ?;';
+
+      await this.database.run(deleteSQL,[guid]);
+      await this.persistWebDB();
+
+    } catch (error) {
+      return String(error);
+    }
+  }
+
   public async setDish(dish: Dish): Promise<void | string> {
 
     try {
@@ -152,6 +168,22 @@ export class DataService {
       }
 
       return JSON.parse(storedValue) as Dish;
+
+    } catch (error) {
+      return String(error);
+    }
+  }
+
+  public async deleteDish(guid: string): Promise<void | string> {
+
+    try {
+
+      await this.ready;
+
+      var deleteSQL = 'DELETE FROM dishes WHERE guid = ?;';
+
+      await this.database.run(deleteSQL,[guid]);
+      await this.persistWebDB();
 
     } catch (error) {
       return String(error);

@@ -20,8 +20,7 @@
                 </ion-item>
 
                 <ion-item-options>
-                    <ion-item-option>Favorite</ion-item-option>
-                    <ion-item-option color="danger">Delete</ion-item-option>
+                    <ion-item-option color="danger" (click)="presentDeleteAlert(ingredient.guid!)">Delete</ion-item-option>
                 </ion-item-options>
             </ion-item-sliding>
         }
@@ -79,5 +78,7 @@
         </ion-content>
       </ng-template>
     </ion-modal>
+
+    <ion-alert [isOpen]="isDeleteAlertOpen()" (didDismiss)="isDeleteAlertOpen.set(false)" [buttons]="alertButtons" header="Delete ingredient?" message="This ingredient will be removed."></ion-alert>
 
 </ion-content>
