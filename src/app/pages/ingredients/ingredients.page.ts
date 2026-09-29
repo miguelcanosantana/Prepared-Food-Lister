@@ -72,10 +72,6 @@ export class IngredientsPage implements OnInit {
   }
 
   presentDeleteAlert(guid: string) {
-    if (guid === null) {
-      return;
-    }
-
     this.selectedIngredientGuid = guid;
     this.isDeleteAlertOpen.set(true);
   }
