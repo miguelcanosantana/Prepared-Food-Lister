@@ -192,6 +192,24 @@ export class DataService {
     }
   }
 
+  public async updateDish(dish: Dish): Promise<void | string> {
+
+    try {
+
+      await this.ready;
+
+      if (!dish.guid) {
+        return 'Dish to update has no guid';
+      }
+
+      await this.database.run('UPDATE dishes SET data = ? WHERE guid = ?;', [JSON.stringify(dish), dish.guid]);
+      await this.persistWebDB();
+
+    } catch (error) {
+      return String(error);
+    }
+  }
+
   public async deleteDish(guid: string): Promise<void | string> {
 
     try {

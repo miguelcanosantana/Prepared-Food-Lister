@@ -28,12 +28,12 @@
     </ion-list>
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-      <ion-fab-button id="open-create-modal">
+    <ion-fab-button id="open-create-ingredient-modal">
           <ion-icon name="add"></ion-icon>
       </ion-fab-button>
     </ion-fab>
 
-    <ion-modal #modal trigger="open-create-modal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]" handleBehavior="cycle" [expandToScroll]="false">
+    <ion-modal #modal trigger="open-create-ingredient-modal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]" handleBehavior="cycle" [expandToScroll]="false">
       <ng-template>
         <ion-header>
           <ion-toolbar>
