@@ -39,6 +39,7 @@ export class DishesPage implements OnInit {
   isDeleteAlertOpen = signal(false);
   selectedDishGuid: string | null = null;
   selectedIngredientGuids: string[] = [];
+  selectedIngredientAmounts: Record<string, number> = {};
   newDish = new Dish();
   editingDish = new Dish();
 
@@ -74,8 +75,28 @@ export class DishesPage implements OnInit {
     this.availableIngredients.set(loadResult);
   }
 
+  selectedIngredients() {
+    return this.availableIngredients().filter(ingredient =>
+      this.selectedIngredientGuids.includes(ingredient.guid ?? '')
+    );
+  }
+
+  onSelectedIngredientsChange(guids: string[]) {
+    this.selectedIngredientGuids = guids;
+    for (const guid of guids) {
+      this.selectedIngredientAmounts[guid] ??= 1;
+    }
+  }
+
+  private getSelectedIngredientsWithAmounts(): [string, number][] {
+    return this.selectedIngredientGuids.map((guid): [string, number] => [
+      guid,
+      this.selectedIngredientAmounts[guid] ?? 1,
+    ]);
+  }
+
   async saveNewDish(modal: IonModal) {
-    this.newDish.ingredients = this.availableIngredients().filter(ingredient => this.selectedIngredientGuids.includes(ingredient.guid ?? ''));
+    this.newDish.ingredientsGuidAndAmount = this.getSelectedIngredientsWithAmounts();
     const saveResult = await this.dataService.setDish(this.newDish);
     if (typeof saveResult === 'string') {
       this.loadError.set(saveResult);
@@ -85,17 +106,22 @@ export class DishesPage implements OnInit {
     await this.loadDishes();
     this.newDish = new Dish();
     this.selectedIngredientGuids = [];
+    this.selectedIngredientAmounts = {};
     await modal.dismiss();
   }
 
   openEditModal(dish: Dish, modal: IonModal) {
     this.editingDish = Object.assign(new Dish(), dish);
-    this.selectedIngredientGuids = (dish.ingredients ?? []).map(ingredient => ingredient.guid).filter((guid): guid is string => Boolean(guid));
+    const ingredients = dish.ingredientsGuidAndAmount ?? [];
+    this.selectedIngredientGuids = ingredients.map(([guid]) => guid);
+    this.selectedIngredientAmounts = Object.fromEntries(
+      ingredients.map(([guid, amount]) => [guid, amount])
+    );
     void modal.present();
   }
 
   async saveEditedDish(modal: IonModal) {
-    this.editingDish.ingredients = this.availableIngredients().filter(ingredient => this.selectedIngredientGuids.includes(ingredient.guid ?? ''));
+    this.editingDish.ingredientsGuidAndAmount = this.getSelectedIngredientsWithAmounts();
     const updateResult = await this.dataService.updateDish(this.editingDish);
     if (typeof updateResult === 'string') {
       this.loadError.set(updateResult);

@@ -1,11 +1,9 @@
-import { Ingredient } from './ingredient';
-
 export class Dish {
   constructor(
     public guid?: string,
     public name?: string,
     public dateSaved?: number,
-    public ingredients?: Ingredient[],
+    public ingredientsGuidAndAmount?: [string, number][],
     public description?: string,
     public servings?: number,
   ) {}

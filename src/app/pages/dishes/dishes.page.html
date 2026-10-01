@@ -55,12 +55,17 @@
               <ion-input type="number" label="Servings" label-placement="floating" fill="solid" [(ngModel)]="newDish.servings"></ion-input>
             </ion-col>
             <ion-col size="12">
-              <ion-select label="Ingredients" label-placement="floating" fill="solid" multiple="true" [(ngModel)]="selectedIngredientGuids">
+              <ion-select label="Ingredients" label-placement="floating" fill="solid" multiple="true" [ngModel]="selectedIngredientGuids" (ngModelChange)="onSelectedIngredientsChange($event)">
                 @for (ingredient of availableIngredients(); track ingredient.guid) {
                   <ion-select-option [value]="ingredient.guid">{{ ingredient.name }}</ion-select-option>
                 }
               </ion-select>
             </ion-col>
+            @for (ingredient of selectedIngredients(); track ingredient.guid) {
+              <ion-col size="12">
+                <ion-input type="number" min="0" step="any" label="{{ ingredient.name }} amount{{ ingredient.unit ? ' (' + ingredient.unit + ')' : '' }}" label-placement="floating" fill="solid" [(ngModel)]="selectedIngredientAmounts[ingredient.guid!]" />
+              </ion-col>
+            }
           </ion-row>
         </ion-grid>
       </ion-content>
@@ -93,12 +98,17 @@
               <ion-input type="number" label="Servings" label-placement="floating" fill="solid" [(ngModel)]="editingDish.servings"></ion-input>
             </ion-col>
             <ion-col size="12">
-              <ion-select label="Ingredients" label-placement="floating" fill="solid" multiple="true" [(ngModel)]="selectedIngredientGuids">
+              <ion-select label="Ingredients" label-placement="floating" fill="solid" multiple="true" [ngModel]="selectedIngredientGuids" (ngModelChange)="onSelectedIngredientsChange($event)">
                 @for (ingredient of availableIngredients(); track ingredient.guid) {
                   <ion-select-option [value]="ingredient.guid">{{ ingredient.name }}</ion-select-option>
                 }
               </ion-select>
             </ion-col>
+            @for (ingredient of selectedIngredients(); track ingredient.guid) {
+              <ion-col size="12">
+                <ion-input type="number" min="0" step="any" label="{{ ingredient.name }} amount{{ ingredient.unit ? ' (' + ingredient.unit + ')' : '' }}" label-placement="floating" fill="solid" [(ngModel)]="selectedIngredientAmounts[ingredient.guid!]" />
+              </ion-col>
+            }
           </ion-row>
         </ion-grid>
       </ion-content>
