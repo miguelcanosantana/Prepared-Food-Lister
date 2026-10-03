@@ -6,6 +6,7 @@ import {
   IonTabButton,
   IonTabs,
 } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { nutritionOutline, restaurantOutline } from 'ionicons/icons';
 
@@ -13,7 +14,7 @@ import { nutritionOutline, restaurantOutline } from 'ionicons/icons';
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss'],
-  imports: [IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs],
+  imports: [IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs, TranslatePipe],
 })
 export class TabsComponent {
   constructor() {
